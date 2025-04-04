@@ -3,6 +3,7 @@ using System.IO;
 using System.Media;
 using System.Threading;
 using System;
+using System.Collections.Generic;
 
 
 
@@ -15,6 +16,7 @@ namespace Chatbot__Poe__Part_1
        
                     // variable declaraton 
         private ArrayList replies = new ArrayList();
+        private ArrayList keywords = new ArrayList(); // store keywords separately
         private string userName = "";
 
 
@@ -34,6 +36,7 @@ namespace Chatbot__Poe__Part_1
         //chatbot menu method
         private void ChatbotMenu()
         {
+            
 
 
             while (true)
@@ -51,9 +54,9 @@ namespace Chatbot__Poe__Part_1
                     Console.ResetColor();
                     continue;
 
-                }
+                }//end if 
 
-                Console.WriteLine($"\nWelcome, {userName}! How can I assist you in staying secure online today?");
+                Console.WriteLine($"\nWelcome, {userName}! Lets talk about cybersecurity today");
                 Console.WriteLine("Would you like to ask a question? (yes/no)");
                 string choice = Console.ReadLine().Trim().ToLower();
 
@@ -72,7 +75,7 @@ namespace Chatbot__Poe__Part_1
                         Console.ResetColor();
                         break;
                 }
-            }
+            }//end of while loop
 
 
 
@@ -84,7 +87,7 @@ namespace Chatbot__Poe__Part_1
         {
 
             //
-            store_replies();
+            store_replies();// Ensure replies are stored
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("\nYou can ask about: Purpose, Password Security, Phishing Scams, Safe Browsing Practices ");
@@ -101,8 +104,8 @@ namespace Chatbot__Poe__Part_1
                     
                     // prompt user for question
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Enter your question:");
-                    Console.WriteLine("If you have no question. Type 'exit' to leave the chatbot.\n");
+                    Console.WriteLine("Enter your question (or type 'exit' to quit):");
+                   
                     userInput = Console.ReadLine()?.Trim().ToLower();
 
                     if (string.IsNullOrWhiteSpace(userInput))
@@ -123,64 +126,56 @@ namespace Chatbot__Poe__Part_1
                 if (userInput == "exit")
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.WriteLine("Goodbye! remember to stay safe online");
+                        Console.WriteLine("Goodbye! remember to stay safe online   "  + userName  );
                         Console.ResetColor();
                         Thread.Sleep(1000); // Pause before exiting
                         Environment.Exit(0); // Completely exit the chatbot
                     }//end of if statement
 
-                    
-                    bool found = false;
+                // Split the user question into words for better matching
+                string[] words = userInput.Split(' ');
+                HashSet<int> matchedIndexes = new HashSet<int>();
+
+               
 
 
                     foreach (string reply in replies)
                     {
-                        
-                            if (reply.ToLower().Contains(userInput))
-                            {
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine(reply);// displays matching reply
-                                Console.ResetColor();
-                                found = true;
-                                break;// stop searching after first match
+                    for (int i = 0; i < keywords.Count; i++)
+                    {
+                        if (reply.Contains(keywords[i].ToString()) && !matchedIndexes.Contains(i))
+                        {
+                            matchedIndexes.Add(i);
+                        }//end if
+                    }// end of nested loop
 
 
-                            }//end of if 
-                        
-                       
-                    }// end of for loop
+                }// end of for loop
 
                     // Display an error message if no answer found
 
-                    if (!found)
+                    if (matchedIndexes.Count > 0)
                     {
-                    // Split the user question into words for better matching
-                    string[] words = userInput.Split(' ');
+                   
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("[WishiChatBot]: Here’s what I found based on your question: ");
+                    foreach (int index in matchedIndexes)
+                    {
+                        Console.WriteLine($"- {replies[index]}");
+                    }//end of for loop 
+                    Console.ResetColor();
 
-                    foreach (string reply in replies)
-                    {
-                        foreach (string word in words)
-                        {
-                            if (reply.ToLower().Contains(word.Trim()))
-                            {
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine(reply); // Display the matching reply
-                                Console.ResetColor();
-                                found = true;
-                                break; // Stop searching after the first match
-                            }//end of if statement
-                        }//end of nested loop
-                        if (found) break; // Stop checking other replies if a match is found
-                    }//end of for loop
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(" I don't have an answer for that. Try asking about: Purpose, Password Security, Phishing Scams, or Safe Browsing Practices");
-                        Console.ResetColor();
-                    }
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\nYou can ask another question or type 'exit' to leave.");
+                    Console.ResetColor();
+                }//end if
 
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(" Enter another question.");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("[WishiChatBot]: Sorry, I couldn't find an answer for that.");
+                    Console.WriteLine("Try asking about: Purpose, Password Security, Phishing Scams, or Safe Browsing Practices.");
+                    Console.ResetColor();
                     }// end of else 
 
                 }//end of while
@@ -192,12 +187,18 @@ namespace Chatbot__Poe__Part_1
         private void store_replies()
         {
             if (replies.Count == 0)
-            { // Ensures replies are only stored once
+            {
+                keywords.Add("purpose");
+                keywords.Add("password");
+                keywords.Add("phishing");
+                keywords.Add("browsing");
+
+                // Ensures replies are only stored once
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                replies.Add("purpose:  My purpose is to help you with cybersecurity awareness");
-                replies.Add("password security: Use strong passwords with uppercase, lowercase, numbers , and symbols");
-                replies.Add("phishing scams:  Be cautious of emails asking for sensitive information. Verify links before clicking");
-                replies.Add("safe browsing: Always check fort 'HTTPS' in website URLS. Keep your software updated.");
+                replies.Add("  purpose:  My purpose is to help you with cybersecurity awareness");
+                replies.Add("  password security: Use strong passwords with uppercase, lowercase, numbers , and symbols");
+                replies.Add("  phishing scams:  Be cautious of emails asking for sensitive information. Verify links before clicking");
+                replies.Add(" safe browsing: Always check fort 'HTTPS' in website URLS. Keep your software updated.");
 
 
             }// end of if statement
@@ -260,7 +261,7 @@ namespace Chatbot__Poe__Part_1
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Error playing welcome message: {ex.Message}");
+                Console.WriteLine($"[WishiChatBot]: Error playing welcome message: {ex.Message}");
             } // End of catch
         } // End of welcome message method
 
