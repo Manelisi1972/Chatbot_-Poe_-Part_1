@@ -126,7 +126,7 @@ namespace Chatbot__Poe__Part_1
                 if (userInput == "exit")
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.WriteLine("Goodbye! remember to stay safe online   "  + userName  );
+                        Console.WriteLine("Goodbye! remember to stay safe online   "  + userName , "!" );
                         Console.ResetColor();
                         Thread.Sleep(1000); // Pause before exiting
                         Environment.Exit(0); // Completely exit the chatbot
