@@ -53,5 +53,6 @@
   <ItemGroup>
     <Content Include="welcome.wav" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
